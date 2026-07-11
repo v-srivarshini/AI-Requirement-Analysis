@@ -1,0 +1,154 @@
+.profile-page{
+    display:flex;
+    min-height:100vh;
+    background:#F8FAFC;
+}
+
+.profile-content{
+    flex:1;
+    padding:35px;
+}
+
+.profile-header{
+    margin-bottom:30px;
+}
+
+.profile-header h1{
+    font-size:34px;
+    color:#111827;
+    margin-bottom:8px;
+}
+
+.profile-header p{
+    color:#6B7280;
+    font-size:16px;
+}
+
+.profile-card{
+    max-width:700px;
+    background:#FFFFFF;
+    border-radius:18px;
+    padding:40px;
+    box-shadow:0 4px 16px rgba(0,0,0,.05);
+}
+
+.profile-avatar{
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    position:relative;
+    margin-bottom:35px;
+}
+
+.avatar-circle{
+    width:110px;
+    height:110px;
+    border-radius:50%;
+    background:#E5E7EB;
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    border:3px solid #FFFFFF;
+    box-shadow:0 4px 12px rgba(0,0,0,.08);
+}
+
+.user-icon{
+    font-size:46px;
+    color:#6B7280;
+}
+
+.camera-btn{
+    position:absolute;
+    bottom:5px;
+    right:calc(50% - 55px);
+    width:36px;
+    height:36px;
+    border:none;
+    border-radius:50%;
+    background:#1E293B;
+    color:#FFFFFF;
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    cursor:pointer;
+    box-shadow:0 4px 10px rgba(0,0,0,.15);
+    transition:.3s;
+}
+
+.camera-btn:hover{
+    background:#111827;
+    transform:scale(1.08);
+}
+
+.profile-form{
+    display:flex;
+    flex-direction:column;
+    gap:22px;
+}
+
+.form-group{
+    display:flex;
+    flex-direction:column;
+}
+
+.form-group label{
+    font-size:15px;
+    font-weight:600;
+    color:#374151;
+    margin-bottom:8px;
+}
+
+.form-group input{
+    padding:14px 16px;
+    border:1px solid #D1D5DB;
+    border-radius:10px;
+    background:#F9FAFB;
+    font-size:15px;
+    outline:none;
+    transition:.3s;
+}
+
+.form-group input:focus{
+    border-color:#1E293B;
+    background:#FFFFFF;
+}
+
+.profile-actions{
+    margin-top:10px;
+}
+
+.edit-btn{
+    width:180px;
+    padding:14px;
+    border:none;
+    border-radius:10px;
+    background:#1E293B;
+    color:#FFFFFF;
+    font-size:15px;
+    font-weight:600;
+    cursor:pointer;
+    transition:.3s;
+}
+
+.edit-btn:hover{
+    background:#111827;
+}
+
+@media(max-width:768px){
+
+    .profile-content{
+        padding:20px;
+    }
+
+    .profile-card{
+        padding:25px;
+    }
+
+    .profile-header h1{
+        font-size:28px;
+    }
+
+    .edit-btn{
+        width:100%;
+    }
+}

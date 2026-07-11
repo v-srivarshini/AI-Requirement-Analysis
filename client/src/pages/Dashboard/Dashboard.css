@@ -1,0 +1,166 @@
+.dashboard{
+    display:flex;
+    background:#F1F5F9;
+    min-height:100vh;
+}
+
+.dashboard-content{
+    flex:1;
+    padding:30px;
+}
+
+
+.hero-section{
+    margin:20px 35px;
+}
+
+.hero-section h1{
+    font-size:36px;
+    font-weight:700;
+    color:#111827;
+}
+
+.hero-section p{
+    margin-top:8px;
+    color:#6B7280;
+    font-size:16px;
+}
+.hero-card{
+    margin:30px 10px;
+    background:#ffffff;
+    border-radius:18px;
+    padding:35px;
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    box-shadow:0 8px 25px rgba(0,0,0,.06);
+}
+
+.hero-left{
+    width:50%;
+}
+
+.hero-left h3{
+    font-size:28px;
+    color:#1E293B;
+    margin-bottom:15px;
+}
+
+.hero-left p{
+    color:#6B7280;
+    font-size:16px;
+    line-height:1.7;
+    margin-bottom:25px;
+}
+
+.new-btn{
+    width:220px;
+    background:#1E293B;
+    color:white;
+    padding:14px 18px;
+    border:none;
+    border-radius:12px;
+    font-size:16px;
+    font-weight:600;
+    cursor:pointer;
+}
+
+.new-btn:hover{
+    background:#111827;
+}
+
+.hero-right{
+    width:40%;
+    display:flex;
+    justify-content:center;
+}
+
+.hero-image{
+    width:220px;
+}
+.stats{
+    display:grid;
+    grid-template-columns:repeat(4,1fr);
+    gap:20px;
+}
+
+
+.overview{
+    margin:35px;
+}
+
+.overview h3{
+    font-size:26px;
+    color:#111827;
+    margin-bottom:20px;
+}
+
+.overview-grid{
+    display:grid;
+    grid-template-columns:repeat(4,1fr);
+    gap:22px;
+}
+.section-title{
+    font-size:20px;
+    margin:30px 0 20px;
+}
+
+.stats-grid{
+    display:grid;
+    grid-template-columns:repeat(4,1fr);
+    gap:18px;
+}
+
+.stat-card{
+    background:#fff;
+    padding:20px;
+    border-radius:15px;
+}
+
+.stat-card h4{
+    font-size:15px;
+    color:#64748B;
+    margin-bottom:10px;
+}
+
+.stat-card p{
+    font-size:30px;
+    font-weight:700;
+}
+
+.recent-analysis{
+    margin:35px;
+}
+
+.recent-top{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    margin-bottom:20px;
+}
+
+.recent-top h3{
+    font-size:26px;
+    color:#111827;
+}
+
+.view-btn{
+    width:auto;
+    padding:10px 18px;
+    background:#1E293B;
+    color:white;
+    border:none;
+    border-radius:10px;
+    cursor:pointer;
+}
+
+table{
+    width:100%;
+    border-collapse:collapse;
+}
+
+th,td{
+    padding:14px;
+    text-align:left;
+    border-bottom:1px solid #eee;
+}
