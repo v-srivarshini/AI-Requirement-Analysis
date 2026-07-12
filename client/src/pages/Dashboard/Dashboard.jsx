@@ -1,4 +1,6 @@
 import "./Dashboard.css";
+import { useEffect, useState } from "react";
+import api from "../../services/api";
 import {
  FaClipboardList,
  FaCheckCircle,
@@ -13,6 +15,19 @@ import StatCard from "../../components/Card/StatCard";
 import AnalysisCard from "../../components/Card/AnalysisCard";
 
 function Dashboard() {
+  const [projects, setProjects] = useState([]);
+  useEffect(() => {
+  const fetchProjects = async () => {
+    try {
+      const response = await api.get("/projects");
+      setProjects(response.data.projects);
+    } catch (error) {
+      console.log("Projects Error:", error);
+    }
+  };
+
+  fetchProjects();
+}, []);
   const navigate = useNavigate();
   return (
     <div className="dashboard">

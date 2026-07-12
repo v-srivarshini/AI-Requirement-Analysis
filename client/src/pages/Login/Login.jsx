@@ -1,7 +1,39 @@
 import "./Login.css";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
+import { useState } from "react";
 import reactLogo from "../../assets/react.svg";
+import { loginUser } from "../../services/authService";
 function Login() {
+const navigate = useNavigate();
+
+const [email, setEmail] = useState("");
+
+const handleLogin = async (e) => {
+  e.preventDefault();
+
+  try {
+    const data = await loginUser({
+      email,
+      password,
+    });
+
+    localStorage.setItem("token", data.token);
+    localStorage.setItem("user", JSON.stringify(data.user));
+
+    alert("Login Successful!");
+
+    navigate("/dashboard");
+  } catch (error) {
+  console.log(error);
+  console.log(error.response);
+
+  alert(
+    error.response?.data?.message || "Login Failed. Please try again."
+  );
+}
+};
+const [password, setPassword] = useState("");
+
   return (
     <div className="login-container">
 
@@ -31,22 +63,27 @@ function Login() {
     <p>
        Login to your account.
     </p>
-    <form>
+
+ <form onSubmit={handleLogin}>
 
   <div className="form-group">
     <label>Email Address</label>
-    <input
-      type="email"
-      placeholder="Enter your email"
-    />
+   <input
+  type="email"
+  placeholder="Enter your email"
+  value={email}
+  onChange={(e) => setEmail(e.target.value)}
+/>
   </div>
 
   <div className="form-group">
     <label>Password</label>
-    <input
-      type="password"
-      placeholder="Enter your password"
-    />
+   <input
+  type="password"
+  placeholder="Enter your password"
+  value={password}
+  onChange={(e) => setPassword(e.target.value)}
+/>
   </div>
 <div className="form-options">
   <a href="#">Forgot Password?</a>
