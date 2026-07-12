@@ -10,9 +10,10 @@ const {
 } = require("../controllers/projectController");
 
 const { protect } = require("../middleware/authMiddleware");
+const { validateProject } = require("../middleware/validationMiddleware");
 
 // Create Project
-router.post("/", protect, createProject);
+router.post("/", protect, validateProject, createProject);
 
 // Get All Projects
 router.get("/", protect, getProjects);

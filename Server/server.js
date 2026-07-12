@@ -4,6 +4,7 @@ const connectDB = require("./config/db");
 const authRoutes = require("./routes/authRoutes");
 const projectRoutes = require("./routes/projectRoutes");
 const requirementRoutes = require("./routes/requirementRoutes");
+const { errorHandler } = require("./middleware/errorMiddleware");
 dotenv.config();
 connectDB();
 const allowedOrigins = [
@@ -29,6 +30,7 @@ app.use(express.json());
 app.use("/api/auth", authRoutes);
 app.use("/api/projects", projectRoutes);
 app.use("/api/requirements", requirementRoutes);
+app.use(errorHandler);
 
 const PORT = process.env.PORT || 5000;
 

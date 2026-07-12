@@ -10,9 +10,11 @@ const {
 } = require("../controllers/requirementController");
 
 const { protect } = require("../middleware/authMiddleware");
+const {
+  validateRequirement,
+} = require("../middleware/validationMiddleware");
 
-router.post("/", protect, createRequirement);
-
+router.post("/", protect, validateRequirement, createRequirement);
 // Get all requirements of one project
 router.get("/project/:projectId", protect, getRequirements);
 router.get("/:id", protect, getRequirementById);
