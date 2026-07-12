@@ -4,10 +4,25 @@ const connectDB = require("./config/db");
 const authRoutes = require("./routes/authRoutes");
 const projectRoutes = require("./routes/projectRoutes");
 const requirementRoutes = require("./routes/requirementRoutes");
-
+dotenv.config();
 connectDB();
+const allowedOrigins = [
+  "http://localhost:5173",
+  "https://your-frontend.vercel.app" // Replace with your actual Vercel URL later
+];
 
 const app = express();
+app.use(cors({
+  origin: (origin, callback) => {
+    if (!origin || allowedOrigins.includes(origin)) {
+      callback(null, true);
+    } else {
+      callback(new Error("Not allowed by CORS"));
+    }
+  },
+  credentials: true,
+}));
+
 
 
 app.use(express.json());
