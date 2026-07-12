@@ -13,6 +13,7 @@ const allowedOrigins = [
 ];
 const cors = require("cors");
 const app = express();
+const aiRoutes = require("./routes/aiRoutes");
 app.use(cors({
   origin: (origin, callback) => {
     if (!origin || allowedOrigins.includes(origin)) {
@@ -30,7 +31,9 @@ app.use(express.json());
 app.use("/api/auth", authRoutes);
 app.use("/api/projects", projectRoutes);
 app.use("/api/requirements", requirementRoutes);
+app.use("/api/ai", aiRoutes);
 app.use(errorHandler);
+
 
 const PORT = process.env.PORT || 5000;
 
