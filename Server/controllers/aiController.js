@@ -47,15 +47,27 @@ const analyzeRequirement = async (req, res) => {
     });
 
   } catch (error) {
+  console.error("AI Error:", error);
 
-    console.error(error);
-
-    res.status(500).json({
+  // Gemini service is temporarily busy
+  if (
+    error.status === 503 ||
+    error.message?.includes("503") ||
+    error.message?.includes("UNAVAILABLE")
+  ) {
+    return res.status(503).json({
       success: false,
-      message: error.message,
+      message: "Gemini AI service is currently busy. Please try again after a few moments.",
     });
-
   }
+
+  // Other errors
+  return res.status(500).json({
+    success: false,
+    message: "AI generation failed",
+    error: error.message,
+  });
+}
 };
 
 module.exports = {
