@@ -69,7 +69,83 @@ const analyzeRequirement = async (req, res) => {
   });
 }
 };
+const getAllAnalyses = async (req, res) => {
+  try {
+    const analyses = await Analysis.find({
+      createdBy: req.user._id,
+    })
+      .populate("project", "projectName companyName")
+      .populate("requirement", "title")
+      .sort({ createdAt: -1 });
+
+    res.status(200).json({
+      success: true,
+      count: analyses.length,
+      analyses,
+    });
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      message: error.message,
+    });
+  }
+};
+const getAnalysisById = async (req, res) => {
+  try {
+    const analysis = await Analysis.findOne({
+      _id: req.params.id,
+      createdBy: req.user._id,
+    })
+      .populate("project", "projectName companyName")
+      .populate("requirement", "title description");
+
+    if (!analysis) {
+      return res.status(404).json({
+        success: false,
+        message: "Analysis not found",
+      });
+    }
+
+    res.status(200).json({
+      success: true,
+      analysis,
+    });
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      message: error.message,
+    });
+  }
+};
+const deleteAnalysis = async (req, res) => {
+  try {
+    const analysis = await Analysis.findOneAndDelete({
+      _id: req.params.id,
+      createdBy: req.user._id,
+    });
+
+    if (!analysis) {
+      return res.status(404).json({
+        success: false,
+        message: "Analysis not found",
+      });
+    }
+
+    res.status(200).json({
+      success: true,
+      message: "Analysis deleted successfully",
+    });
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      message: error.message,
+    });
+  }
+};
 
 module.exports = {
   analyzeRequirement,
+  getAllAnalyses,
+  getAnalysisById,
+  deleteAnalysis,
 };
