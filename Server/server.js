@@ -26,7 +26,7 @@ const app = express();
 // Allowed Origins
 const allowedOrigins = [
   "http://localhost:5173",
-  "https://your-frontend.vercel.app", // Replace with your actual frontend URL after deployment
+  "https://ai-requirement-analysis.vercel.app", // Replace with your actual frontend URL after deployment
 ];
 
 // CORS Configuration
