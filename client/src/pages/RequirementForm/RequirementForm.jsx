@@ -2,38 +2,91 @@ import "./RequirementForm.css";
 import Sidebar from "../../components/Sidebar/Sidebar";
 import { useNavigate } from "react-router-dom";
 import { useState } from "react";
-import api from "../../services/api";
+import { createProject } from "../../services/projectService";
+import { createRequirement } from "../../services/requirementService";
+import { analyzeRequirement } from "../../services/aiService";
 
 function RequirementForm() {
     const navigate = useNavigate();
          const [projectTitle, setProjectTitle] = useState("");
 const [companyName, setCompanyName] = useState("");
 const [description, setDescription] = useState("");
+const [loading, setLoading] = useState(false);
 const handleAnalyze = async () => {
+  setLoading(true);
   try {
 
-    const projectResponse = await api.post("/projects", {
+    // 1. Create Project
+    const projectResponse = await createProject({
       projectName: projectTitle,
-      companyName: companyName,
-      description: description
+      companyName,
+      description,
     });
 
-    const projectId = projectResponse.data.project._id;
+    const projectId = projectResponse.project._id;
 
-    await api.post("/requirements", {
+    // 2. Create Requirement
+    const requirementResponse = await createRequirement({
       project: projectId,
       title: projectTitle,
-      description: description,
-      priority: "High"
+      description,
+      priority: "High",
     });
 
-    navigate("/report");
+    const requirementId = requirementResponse.requirement._id;
 
-  } catch(error) {
-    console.log(error);
-    alert("Something went wrong");
-  }
+   // 3. Analyze with AI
+const analysisResponse = await analyzeRequirement(requirementId);
+
+console.log("AI Response:", analysisResponse);
+console.log("Analysis object:", analysisResponse.analysis);
+console.log("Inner analysis:", analysisResponse.analysis.analysis);
+
+// Save Analysis ID for PDF download
+localStorage.setItem(
+  "analysisId",
+  analysisResponse.analysis._id
+);
+
+// 4. Save AI report
+localStorage.setItem(
+  "analysisReport",
+  JSON.stringify(analysisResponse.analysis.analysis)
+);
+// Save project name for PDF filename
+localStorage.setItem(
+  "selectedProjectName",
+  projectTitle
+);
+console.log("Saving Project Name:", projectTitle);
+
+localStorage.setItem(
+  "selectedProjectName",
+  projectTitle
+);
+
+// 5. Navigate to Report
+navigate("/report");
+  } catch (error) {
+  console.log(error);
+  console.log(error.response);
+  console.log(error.response?.data);
+  alert(error.response?.data?.message || "Something went wrong");
+} finally {
+  setLoading(false);
+
+}
 };
+if (loading) {
+  return (
+
+    <div className="loading-screen">
+      <div className="spinner"></div>
+      <h2>AI is analyzing your requirements...</h2>
+      <p>Please wait while we generate your report.</p>
+    </div>
+  );
+}
   return (
     <div className="requirement-page">
 
@@ -68,7 +121,6 @@ const handleAnalyze = async () => {
             <div className="form-group">
               <label>
                 Client / Company Name
-                <span className="optional"> (Optional)</span>
               </label>
 
               <input
@@ -98,18 +150,19 @@ const handleAnalyze = async () => {
               onChange={(e)=>setDescription(e.target.value)}
               ></textarea>
 
-              <div className="char-count">
-                0 / 2000
-              </div>
+             <div className="char-count">
+{description.length} / 2000
+</div>
 
             </div>
 
-           <button
+          <button
   type="button"
   className="analyze-btn"
-   onClick={handleAnalyze}
+  onClick={handleAnalyze}
+  disabled={loading}
 >
-  Analyze with AI ✨
+  {loading ? "Analyzing..." : "Analyze with AI ✨"}
 </button>
           </form>
 

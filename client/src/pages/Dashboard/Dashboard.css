@@ -164,3 +164,9 @@ th,td{
     text-align:left;
     border-bottom:1px solid #eee;
 }
+.no-analysis{
+    text-align:center;
+    color:#777;
+    padding:25px;
+    font-size:15px;
+}

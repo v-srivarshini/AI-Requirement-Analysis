@@ -1,8 +1,16 @@
 import "./Profile.css";
 import Sidebar from "../../components/Sidebar/Sidebar";
-import { FaCamera, FaUser } from "react-icons/fa";
+import { useEffect, useState } from "react";
 
 function Profile() {
+
+  const [user, setUser] = useState({});
+
+  useEffect(() => {
+    const storedUser = JSON.parse(localStorage.getItem("user") || "{}");
+    setUser(storedUser);
+  }, []);
+
   return (
     <div className="profile-page">
 
@@ -22,19 +30,12 @@ function Profile() {
           <div className="profile-avatar">
 
             <div className="avatar-circle">
-              <FaUser className="user-icon" />
+              {user?.name?.charAt(0).toUpperCase() || "U"}
             </div>
-
-            <button
-              type="button"
-              className="camera-btn"
-            >
-              <FaCamera />
-            </button>
 
           </div>
 
-          {/* Form */}
+          {/* Profile Form */}
 
           <form className="profile-form">
 
@@ -42,7 +43,8 @@ function Profile() {
               <label>Full Name</label>
               <input
                 type="text"
-                placeholder="Enter your full name"
+                value={user?.name || ""}
+                readOnly
               />
             </div>
 
@@ -50,26 +52,29 @@ function Profile() {
               <label>Email Address</label>
               <input
                 type="email"
-                placeholder="Enter your email"
+                value={user?.email || ""}
+                readOnly
               />
             </div>
-
 
             <div className="form-group">
               <label>Phone Number</label>
               <input
                 type="text"
-                placeholder="Enter your phone number"
+                value={user?.phone || "Not Provided"}
+                readOnly
               />
             </div>
-
-            {/* Button */}
 
             <div className="profile-actions">
 
               <button
                 type="button"
                 className="edit-btn"
+               onClick={() =>
+  alert("Profile update feature will be available in a future update.")
+
+                }
               >
                 Edit Profile
               </button>

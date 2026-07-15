@@ -1,4 +1,7 @@
 import "./Report.css";
+import api from "../../services/api";
+import { useNavigate } from "react-router-dom";
+import { useEffect, useState } from "react";
 import Sidebar from "../../components/Sidebar/Sidebar";
 import {
   FaArrowLeft,
@@ -10,108 +13,143 @@ import {
 } from "react-icons/fa";
 
 function Report() {
+  const navigate = useNavigate();
+  const [reportData, setReportData] = useState(null);
+  useEffect(() => {
+    const data = localStorage.getItem("analysisReport");
+    if(data){
+      setReportData(JSON.parse(data));
+    }
+  }, []);
+  // PDF DOWNLOAD FUNCTION
+  const handleDownload = async () => {
+  try {
+
+    const analysisId = localStorage.getItem("analysisId");
+
+    if (!analysisId) {
+      alert("Analysis ID not found");
+      return;
+    }
+
+    const response = await api.get(`/pdf/${analysisId}`, {
+      responseType: "blob",
+    });
+
+    const file = new Blob([response.data], {
+      type: "application/pdf",
+    });
+
+    const fileURL = window.URL.createObjectURL(file);
+
+    const link = document.createElement("a");
+
+    link.href = fileURL;
+
+    // Latest project name
+    const projectName =
+      localStorage.getItem("selectedProjectName") || "AI_Analysis";
+
+    link.download = `${projectName.replace(/\s+/g, "_")}_Report.pdf`;
+
+    document.body.appendChild(link);
+
+    link.click();
+
+    document.body.removeChild(link);
+
+    window.URL.revokeObjectURL(fileURL);
+
+  } catch (error) {
+
+    console.log(error);
+    console.log(error.response);
+
+    alert(error.response?.data?.message || "PDF download failed");
+
+  }
+};
   return (
     <div className="report-page">
-
       <Sidebar />
-
       <div className="report-content">
-
-        {/* Header */}
-
         <div className="report-header">
-
           <div>
-
-            <button className="back-btn">
+           <button
+              className="back-btn"
+              onClick={() => navigate("/ai-analysis")}
+            >
               <FaArrowLeft />
               Back to My Analyses
             </button>
-
-            <h1>AI Requirement Analysis Report</h1>
-
+            <h1>
+              AI Requirement Analysis Report
+            </h1>
             <p>
-              Generated on <strong>08 July 2026</strong>
+              Generated on 
+              <strong>
+                {new Date().toLocaleDateString()}
+              </strong>
             </p>
-
           </div>
-
-          <button className="download-btn">
+          <button 
+            className="download-btn"
+            onClick={handleDownload}
+          >
             <FaDownload />
             Download Report
           </button>
-
         </div>
-
-        {/* Status */}
-
         <div className="status-badge">
           <FaCheckCircle />
           Completed
         </div>
-
-        {/* Summary */}
-
         <div className="report-card">
-
-          <h2>Project Summary</h2>
-
+          <h2>
+            Project Summary
+          </h2>
           <p>
-            This AI-powered Requirement Analyzer converts software
-            requirements into structured documentation. It identifies
-            functional requirements, non-functional requirements,
-            recommended technologies, implementation timeline and
-            development recommendations automatically.
+            {reportData?.projectSummary || "Generating AI analysis..."}
           </p>
 
         </div>
 
-        {/* Functional */}
-
         <div className="report-card">
 
-          <h2>Functional Requirements</h2>
-
+          <h2>
+            Functional Requirements
+          </h2>
           <ul>
 
-            <li>User Registration & Login</li>
-
-            <li>Requirement Submission</li>
-
-            <li>AI Requirement Analysis</li>
-
-            <li>Report Generation</li>
-
-            <li>Dashboard Statistics</li>
+            {
+              reportData?.functionalRequirements?.map((item,index)=>(
+                <li key={index}>
+                  {item}
+                </li>
+              ))
+            }
 
           </ul>
 
         </div>
 
-        {/* Non Functional */}
-
         <div className="report-card">
 
-          <h2>Non Functional Requirements</h2>
-
+          <h2>
+            Non Functional Requirements
+          </h2>
           <ul>
-
-            <li>Responsive User Interface</li>
-
-            <li>Secure Authentication</li>
-
-            <li>Fast Response Time</li>
-
-            <li>Scalable Architecture</li>
-
+            {
+              reportData?.nonFunctionalRequirements?.map((item,index)=>(
+                <li key={index}>
+                  {item}
+                </li>
+              ))
+            }
           </ul>
-
         </div>
 
-        {/* Tech Stack */}
-
         <div className="report-card">
-
           <h2>
             <FaCode />
             Recommended Tech Stack
@@ -119,66 +157,94 @@ function Report() {
 
           <div className="tech-grid">
 
-            <div>
-              <strong>Frontend</strong>
-              <p>React.js</p>
-            </div>
-
-            <div>
-              <strong>Backend</strong>
-              <p>Node.js + Express</p>
-            </div>
-
-            <div>
-              <strong>Database</strong>
-              <p>MongoDB</p>
-            </div>
-
-            <div>
-              <strong>AI Model</strong>
-              <p>Gemini API</p>
-            </div>
+            {
+              reportData?.techStack?.map((tech,index)=>(
+                <div key={index}>
+                  <p>{tech}</p>
+                </div>
+              ))
+            }
 
           </div>
-
         </div>
 
-        {/* Timeline */}
+        <div className="report-card">
+          <h2>
+            Features
+          </h2>
+          <ul>
+          {
+            reportData?.features?.map((item,index)=>(
+              <li key={index}>
+                {item}
+              </li>
+            ))
+          }
+          </ul>
+        </div>
 
         <div className="report-card">
-
           <h2>
-            <FaClock />
-            Estimated Timeline
+            Database Tables
           </h2>
+          <ul>
+          {
+            reportData?.databaseTables?.map((item,index)=>(
+              <li key={index}>
+                {item}
+              </li>
+            ))
+          }
+          </ul>
+        </div>
 
+        <div className="report-card">
+          <h2>
+            Suggested APIs
+          </h2>
+          <ul>
+
+          {
+            reportData?.apis?.map((item,index)=>(
+              <li key={index}>
+                {item}
+              </li>
+            ))
+          }
+          </ul>
+        </div>
+
+        <div className="report-card">
+          <h2>
+
+            <FaClock />
+
+            Estimated Timeline
+
+          </h2>
           <p>
             Estimated development duration:
             <strong> 4–6 Weeks</strong>
           </p>
 
         </div>
-
-        {/* Recommendations */}
-
         <div className="report-card">
 
           <h2>
             <FaLightbulb />
-            AI Recommendations
-          </h2>
 
+            AI Recommendations
+
+          </h2>
           <ul>
 
-            <li>Use JWT Authentication.</li>
-
-            <li>Validate all user inputs.</li>
-
-            <li>Store reports inside MongoDB.</li>
-
-            <li>Create downloadable PDF reports.</li>
-
-            <li>Implement proper error handling.</li>
+          {
+            reportData?.aiRecommendations?.map((item,index)=>(
+              <li key={index}>
+                {item}
+              </li>
+            ))
+          }
 
           </ul>
 
@@ -189,5 +255,6 @@ function Report() {
     </div>
   );
 }
+
 
 export default Report;

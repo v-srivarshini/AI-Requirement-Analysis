@@ -1,6 +1,4 @@
 import "./Dashboard.css";
-import { useEffect, useState } from "react";
-import api from "../../services/api";
 import {
  FaClipboardList,
  FaCheckCircle,
@@ -9,26 +7,59 @@ import {
 } from "react-icons/fa";
 
 import { useNavigate } from "react-router-dom";
+import { useEffect, useState } from "react";
+import api from "../../services/api";
 import Sidebar from "../../components/Sidebar/Sidebar";
 import Navbar from "../../components/Navbar/Navbar";
 import StatCard from "../../components/Card/StatCard";
 import AnalysisCard from "../../components/Card/AnalysisCard";
 
 function Dashboard() {
-  const [projects, setProjects] = useState([]);
-  useEffect(() => {
-  const fetchProjects = async () => {
-    try {
-      const response = await api.get("/projects");
-      setProjects(response.data.projects);
-    } catch (error) {
-      console.log("Projects Error:", error);
-    }
-  };
 
-  fetchProjects();
-}, []);
   const navigate = useNavigate();
+  const user = JSON.parse(localStorage.getItem("user"));
+  const [projects, setProjects] = useState([]);
+   const [stats, setStats] = useState({
+  total: 0,
+  completed: 0,
+  reports: 0,
+  pending: 0,
+});
+  useEffect(() => {
+    const fetchProjects = async () => {
+      try {
+        const response = await api.get("/projects");
+
+console.log(response.data);
+console.log(response.data.projects[0]);
+const projectData = response.data.projects;
+setProjects(projectData);
+
+setStats({
+  total: projectData.length,
+
+  // status based counts
+  completed: projectData.filter(
+    (project) => project.status === "Completed"
+  ).length,
+
+  reports: projectData.filter(
+    (project) => project.reportGenerated === true
+  ).length,
+
+  pending: projectData.filter(
+    (project) => 
+      project.status === "Pending" || 
+      project.status === "Draft"
+  ).length,
+});
+      } catch (error) {
+        console.log("Projects Error:", error);
+      }
+    };
+
+    fetchProjects();
+  }, []);
   return (
     <div className="dashboard">
 
@@ -40,7 +71,7 @@ function Dashboard() {
 
   <section className="hero-section">
 
-    <h1>Hello, Sunny! </h1>
+   <h1>Hello, {user?.name}!</h1>
 
     <p>
         Here's what's happening with your analyses.
@@ -67,11 +98,11 @@ function Dashboard() {
 
   <div className="hero-right">
 
-    <img
+    {/* <img
       src="/re"
       alt="AI Illustration"
       className="hero-image"
-    />
+    /> */}
 
   </div>
 
@@ -81,40 +112,37 @@ function Dashboard() {
 
     <h3>Overview</h3>
 
-    <div className="overview-grid">
+   <div className="overview-grid">
 
-        <StatCard
-            icon={<FaClipboardList />}
-            count="12"
-            title="Total Analyses"
-            subtitle="All Time"
-        />
+  <StatCard
+  icon={<FaClipboardList />}
+  count={stats.total}
+  title="Total Analyses"
+  subtitle="Created by you"
+/>
 
-        <StatCard
-            icon={<FaCheckCircle />}
-            count="8"
-            title="Completed"
-            subtitle="This Month"
-        />
+<StatCard
+  icon={<FaCheckCircle />}
+  count={stats.completed}
+  title="Completed"
+  subtitle="Successful Analyses"
+/>
 
-        <StatCard
-            icon={<FaClock />}
-            count="3"
-            title="In Progress"
-            subtitle="This Month"
-        />
+<StatCard
+  icon={<FaFileAlt />}
+  count={stats.reports}
+  title="Reports Generated"
+  subtitle="Ready to View"
+/>
 
-        <StatCard
-            icon={<FaFileAlt />}
-            count="1"
-            title="Drafts"
-            subtitle="This Month"
-        />
+<StatCard
+  icon={<FaClock />}
+  count={stats.pending}
+  title="In Progress"
+  subtitle=""
+/>
 
-    </div>
-
-
-
+</div>
   </section>
 
   <section className="recent-analysis">
@@ -123,32 +151,36 @@ function Dashboard() {
 
         <h3>Recent Analyses</h3>
 
-        <button className="view-btn">
-            View All
-        </button>
+      <button
+  className="view-btn"
+  onClick={() => navigate("/ai-analysis")}>
+  View All
+</button>
 
     </div>
 
-    <AnalysisCard
-  title="E-Commerce Website"
-  date="Analyzed on 27 Jun 2026 • 11:30 AM"
-  status="Completed"
-  iconColor="#DCFCE7"
+{
+  projects.length === 0 ? (
+
+    <p className="no-analysis">
+      No analyses available.
+    </p>
+
+  ) : (
+
+    projects.slice(0, 3).map((project) => (
+
+     <AnalysisCard
+  key={project._id}
+  title={project.projectName}
+  date={new Date(project.createdAt).toLocaleDateString()}
+  status={project.status || "Draft"}
 />
 
-<AnalysisCard
-  title="Hospital Management System"
-  date="Analyzed on 25 Jun 2026 • 04:20 PM"
-  status="Completed"
-  iconColor="#DBEAFE"
-/>
+    ))
 
-<AnalysisCard
-  title="Food Delivery App"
-  date="Analyzed on 24 Jun 2026 • 10:10 AM"
-  status="Completed"
-  iconColor="#FFEDD5"
-/>
+  )
+} 
 
 </section>
 </div>

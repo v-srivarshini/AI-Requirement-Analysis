@@ -1,6 +1,6 @@
 import "./Sidebar.css";
 import { NavLink } from "react-router-dom";
-
+import { useNavigate } from "react-router-dom";
 import {
   FaBrain,
   FaHome,
@@ -12,6 +12,14 @@ import {
 } from "react-icons/fa";
 
 function Sidebar() {
+  const navigate = useNavigate();
+const handleLogout = () => {
+  localStorage.removeItem("token");
+  localStorage.removeItem("user");
+  localStorage.removeItem("analysisReport");
+
+  navigate("/");
+};
   return (
     <aside className="sidebar">
 
@@ -76,10 +84,13 @@ function Sidebar() {
 </ul>
 
       {/* Logout */}
-      <div className="logout">
-        <FaSignOutAlt />
-        <span>Logout</span>
-      </div>
+     <div
+  className="logout"
+  onClick={handleLogout}
+>
+  <FaSignOutAlt />
+  <span>Logout</span>
+</div>
 
     </aside>
   );

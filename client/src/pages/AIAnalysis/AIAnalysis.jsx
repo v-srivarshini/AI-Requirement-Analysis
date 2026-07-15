@@ -1,9 +1,118 @@
 import "./AIAnalysis.css";
 import Sidebar from "../../components/Sidebar/Sidebar";
 import { FaSearch, FaEye, FaDownload, FaTrash } from "react-icons/fa";
+import { useState, useEffect } from "react";
+import { getAllAnalyses,  deleteAnalysis,} from "../../services/aiService";
+import { useNavigate } from "react-router-dom";
+import api from "../../services/api";
 
 function AIAnalysis() {
+
+  const navigate = useNavigate();
+  const [analyses, setAnalyses] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [search, setSearch] = useState("");
+//fetch all analyses function
+  const fetchAnalyses = async () => {
+
+    try {
+
+      const response = await getAllAnalyses();
+
+      console.log(response);
+console.log(response.analyses[0]);
+      setAnalyses(response.analyses);
+
+    } catch (error) {
+
+      console.log(error);
+
+    } finally {
+
+      setLoading(false);
+
+    }
+
+  };
+
+  useEffect(() => {
+
+    fetchAnalyses();
+
+  }, []);
+
+  //delete analysis function
+
+  const handleDelete = async (id) => {
+
+  const confirmDelete = window.confirm(
+    "Are you sure you want to delete this analysis?"
+  );
+
+  if (!confirmDelete) return;
+
+  try {
+
+    await deleteAnalysis(id);
+
+    setAnalyses(
+      analyses.filter((item) => item._id !== id)
+    );
+
+    alert("Analysis deleted successfully!");
+
+  } catch (error) {
+    console.log(error);
+    alert("Failed to delete analysis.");
+  }
+
+};
+//download pdf function
+const handleDownload = async (id, projectName) => {
+
+  try {
+
+    const response = await api.get(
+      `/pdf/${id}`,
+      {
+        responseType: "blob",
+      }
+    );
+
+    const file = new Blob(
+      [response.data],
+      {
+        type: "application/pdf",
+      }
+    );
+
+    const fileURL = window.URL.createObjectURL(file);
+
+    const link = document.createElement("a");
+
+    link.href = fileURL;
+
+   
+   link.download = `${projectName.replace(/\s+/g, "_")}_Report.pdf`;
+
+    document.body.appendChild(link);
+
+    link.click();
+
+    link.remove();
+
+  } catch (error) {
+
+    console.log(error);
+
+    alert("PDF download failed");
+
+  }
+
+};
+
   return (
+
     <div className="analysis-page">
 
       <Sidebar />
@@ -11,26 +120,29 @@ function AIAnalysis() {
       <div className="analysis-content">
 
         <div className="analysis-header">
+
           <h1>My Analyses</h1>
-          <p>View and manage all your AI generated requirement analyses.</p>
+
+          <p>
+            View and manage all your AI generated requirement analyses.
+          </p>
+
         </div>
 
         <div className="analysis-toolbar">
 
           <div className="search-box">
-            <FaSearch />
-            <input
-              type="text"
-              placeholder="Search analysis..."
-            />
-          </div>
 
-          <select className="filter">
-            <option>All</option>
-            <option>Completed</option>
-            <option>In Progress</option>
-            <option>Draft</option>
-          </select>
+            <FaSearch />
+
+           <input
+  type="text"
+  placeholder="Search analysis..."
+  value={search}
+  onChange={(e) => setSearch(e.target.value)}
+/>
+
+          </div>
 
         </div>
 
@@ -39,105 +151,112 @@ function AIAnalysis() {
           <div className="table-head">
 
             <span>Project</span>
+
             <span>Status</span>
+
             <span>Date</span>
+
             <span>Actions</span>
 
           </div>
 
-          {/* Row 1 */}
+          {loading ? (
 
-          <div className="table-row">
+            <p className="no-analysis">
+              Loading analyses...
+            </p>
 
-            <div>
-              <h4>E-Commerce Website</h4>
-              <p>Requirement Analysis</p>
-            </div>
+          ) : analyses.length === 0 ? (
 
-            <span className="status completed">
-              Completed
-            </span>
+            <p className="no-analysis">
+              No analyses found.
+            </p>
 
-            <span>
-              27 Jun 2026
-            </span>
+          ) : (
 
-            <div className="action-icons">
+           analyses
+  .filter((item) =>
+    item.project?.projectName
+      ?.toLowerCase()
+      .includes(search.toLowerCase())
+  )
+  .map((item) => (
 
-              <FaEye />
+              <div
+                className="table-row"
+                key={item._id}
+              >
 
-              <FaDownload />
+                <div>
 
-              <FaTrash />
+                  <h4>
+                    {item.project?.projectName}
+                  </h4>
 
-            </div>
+                  <p>
+                    {item.requirement?.title}
+                  </p>
 
-          </div>
+                </div>
 
-          {/* Row 2 */}
+                <span className="status completed">
 
-          <div className="table-row">
+                  Completed
 
-            <div>
-              <h4>Hospital Management</h4>
-              <p>Requirement Analysis</p>
-            </div>
+                </span>
 
-            <span className="status progress">
-              In Progress
-            </span>
+                <span>
 
-            <span>
-              25 Jun 2026
-            </span>
+                  {new Date(item.createdAt).toLocaleDateString()}
 
-            <div className="action-icons">
+                </span>
 
-              <FaEye />
+                <div className="action-icons">
 
-              <FaDownload />
+                 <FaEye
+  onClick={() => {
+   localStorage.setItem(
+  "analysisReport",
+  JSON.stringify(item.analysis)
+);
+localStorage.setItem(
+  "analysisId",
+  item._id
+);
+localStorage.setItem(
+  "selectedProjectName",
+  item.project.projectName
+);
+    navigate("/report");
+  }}
+/>
 
-              <FaTrash />
+               <FaDownload
+  onClick={() =>
+    handleDownload(item._id, item.project.projectName)
+  }
+  style={{ cursor: "pointer" }}
+/>
+                 <FaTrash
+  onClick={() => handleDelete(item._id)}
+  style={{ cursor: "pointer" }}
+/>
 
-            </div>
+                </div>
 
-          </div>
+              </div>
 
-          {/* Row 3 */}
+            ))
 
-          <div className="table-row">
-
-            <div>
-              <h4>Food Delivery App</h4>
-              <p>Requirement Analysis</p>
-            </div>
-
-            <span className="status draft">
-              Draft
-            </span>
-
-            <span>
-              24 Jun 2026
-            </span>
-
-            <div className="action-icons">
-
-              <FaEye />
-
-              <FaDownload />
-
-              <FaTrash />
-
-            </div>
-
-          </div>
+          )}
 
         </div>
 
       </div>
 
     </div>
-  );
-}
 
+  );
+
+}
 export default AIAnalysis;

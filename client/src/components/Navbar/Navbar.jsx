@@ -1,30 +1,22 @@
 import "./Navbar.css";
-import { FaChevronDown } from "react-icons/fa";
 import { useNavigate } from "react-router-dom";
 
 function Navbar() {
+
   const navigate = useNavigate();
+
+  const user = JSON.parse(localStorage.getItem("user") || "{}");
+
   return (
     <header className="navbar">
 
-      <div></div>
-
-      <div className="navbar-right">
-
-        <div className="profile">
-
-          <div className="profile-circle">
-            S
-          </div>
-{/* 
-          <span className="username">
-            Sunny
-          </span> */}
-
-         
-
+      <div
+        className="profile"
+        onClick={() => navigate("/profile")}
+      >
+        <div className="profile-circle">
+          {user?.name?.charAt(0)?.toUpperCase() || "U"}
         </div>
-
       </div>
 
     </header>

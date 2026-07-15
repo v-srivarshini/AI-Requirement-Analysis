@@ -1,7 +1,7 @@
 import "./Register.css";
 import { Link, useNavigate } from "react-router-dom";
 import { useState } from "react";
-import reactLogo from "../../assets/react.svg";
+import reactLogo from "../../assets/AIimage2.jpeg";
 import { registerUser } from "../../services/authService";
 
 function Register() {

@@ -17,3 +17,13 @@ export const getProfile = async () => {
   const response = await api.get("/auth/profile");
   return response.data;
 };
+
+// Change Password
+export const changePassword = async (passwordData) => {
+  const response = await api.put(
+    "/auth/change-password",
+    passwordData
+  );
+
+  return response.data;
+};

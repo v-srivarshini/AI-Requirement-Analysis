@@ -55,19 +55,49 @@
     color:#374151;
 }
 
-.form-group input{
-    padding:14px 16px;
+/* Password Field */
+
+.password-field{
+    position:relative;
+    width:100%;
+}
+
+.password-field input{
+    width:100%;
+    padding:14px 45px 14px 16px;
     border:1px solid #D1D5DB;
     border-radius:10px;
     background:#F9FAFB;
     outline:none;
     font-size:15px;
+    box-sizing:border-box;
+    transition:.3s;
 }
 
-.form-group input:focus{
+.password-field input:focus{
     border-color:#1E293B;
     background:#FFFFFF;
 }
+
+.password-field span{
+    position:absolute;
+    right:15px;
+    top:50%;
+    transform:translateY(-50%);
+    cursor:pointer;
+    color:#6B7280;
+    font-size:18px;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    z-index:10;
+}
+
+.password-field span:hover{
+    color:#2563EB;
+}
+
+/* Buttons */
 
 .update-btn{
     margin-top:10px;
@@ -109,6 +139,8 @@
     background:#B91C1C;
 }
 
+/* Responsive */
+
 @media(max-width:768px){
 
     .settings-content{
@@ -117,6 +149,10 @@
 
     .settings-card{
         padding:20px;
+    }
+
+    .settings-header h1{
+        font-size:28px;
     }
 
     .update-btn,
