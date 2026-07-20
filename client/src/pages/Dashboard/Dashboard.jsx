@@ -1,189 +1,211 @@
 import "./Dashboard.css";
 import {
- FaClipboardList,
- FaCheckCircle,
- FaClock,
- FaFileAlt,
+  FaClipboardList,
+  FaCheckCircle,
+  FaClock,
+  FaFileAlt,
 } from "react-icons/fa";
 
 import { useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
+
 import api from "../../services/api";
+
 import Sidebar from "../../components/Sidebar/Sidebar";
 import Navbar from "../../components/Navbar/Navbar";
+
 import StatCard from "../../components/Card/StatCard";
 import AnalysisCard from "../../components/Card/AnalysisCard";
 
 function Dashboard() {
 
   const navigate = useNavigate();
+
   const user = JSON.parse(localStorage.getItem("user"));
+
+  // Sidebar State
+  const [sidebarOpen, setSidebarOpen] = useState(false);
+
   const [projects, setProjects] = useState([]);
-   const [stats, setStats] = useState({
-  total: 0,
-  completed: 0,
-  reports: 0,
-  pending: 0,
-});
+
+  const [stats, setStats] = useState({
+    total: 0,
+    completed: 0,
+    reports: 0,
+    pending: 0,
+  });
+
   useEffect(() => {
+
     const fetchProjects = async () => {
+
       try {
+
         const response = await api.get("/projects");
 
-console.log(response.data);
-console.log(response.data.projects[0]);
-const projectData = response.data.projects;
-setProjects(projectData);
+        const projectData = response.data.projects;
 
-setStats({
-  total: projectData.length,
+        setProjects(projectData);
 
-  // status based counts
-  completed: projectData.filter(
-    (project) => project.status === "Completed"
-  ).length,
+        setStats({
 
-  reports: projectData.filter(
-    (project) => project.reportGenerated === true
-  ).length,
+          total: projectData.length,
 
-  pending: projectData.filter(
-    (project) => 
-      project.status === "Pending" || 
-      project.status === "Draft"
-  ).length,
-});
+          completed: projectData.filter(
+            (project) => project.status === "Completed"
+          ).length,
+
+          reports: projectData.filter(
+            (project) => project.reportGenerated === true
+          ).length,
+
+          pending: projectData.filter(
+            (project) =>
+              project.status === "Pending" ||
+              project.status === "Draft"
+          ).length,
+
+        });
+
       } catch (error) {
+
         console.log("Projects Error:", error);
+
       }
+
     };
 
     fetchProjects();
-  }, []);
-  return (
-    <div className="dashboard">
 
-      <Sidebar />
+  }, []);
+
+  return (
+        <div className="dashboard">
+
+      <Sidebar
+        isOpen={sidebarOpen}
+        closeSidebar={() => setSidebarOpen(false)}
+      />
 
       <div className="dashboard-content">
 
-  <Navbar />
+        <Navbar
+          toggleSidebar={() => setSidebarOpen(!sidebarOpen)}
+        />
 
-  <section className="hero-section">
+        <section className="hero-section">
 
-   <h1>Hello, {user?.name}!</h1>
+          <h1>Hello, {user?.name}!</h1>
 
-    <p>
-        Here's what's happening with your analyses.
-    </p>
+          <p>
+            Here's what's happening with your analyses.
+          </p>
 
-</section>
-<section className="hero-card">
+        </section>
 
-  <div className="hero-left">
+        <section className="hero-card">
 
-    <h3>Got a new requirement?</h3>
+          <div className="hero-left">
 
-    <p>
-      Let AI analyze your requirements and suggest the best approach.
-    </p>
+            <h3>Got a new requirement?</h3>
 
-   <button
-    className="new-btn"
-    onClick={() => navigate("/requirement-form")}
->
-    New Requirement
-</button>
-  </div>
+            <p>
+              Let AI analyze your requirements and suggest the best approach.
+            </p>
 
-  <div className="hero-right">
+            <button
+              className="new-btn"
+              onClick={() => navigate("/requirement-form")}
+            >
+              New Requirement
+            </button>
 
-    {/* <img
-      src="/re"
-      alt="AI Illustration"
-      className="hero-image"
-    /> */}
+          </div>
 
-  </div>
+          <div className="hero-right">
 
-</section>
+            {/* Optional Illustration */}
 
-  <section className="overview">
+          </div>
 
-    <h3>Overview</h3>
+        </section>
 
-   <div className="overview-grid">
+        <section className="overview">
 
-  <StatCard
-  icon={<FaClipboardList />}
-  count={stats.total}
-  title="Total Analyses"
-  subtitle="Created by you"
-/>
+          <h3>Overview</h3>
 
-<StatCard
-  icon={<FaCheckCircle />}
-  count={stats.completed}
-  title="Completed"
-  subtitle="Successful Analyses"
-/>
+          <div className="overview-grid">
 
-<StatCard
-  icon={<FaFileAlt />}
-  count={stats.reports}
-  title="Reports Generated"
-  subtitle="Ready to View"
-/>
+            <StatCard
+              icon={<FaClipboardList />}
+              count={stats.total}
+              title="Total Analyses"
+              subtitle="Created by you"
+            />
 
-<StatCard
-  icon={<FaClock />}
-  count={stats.pending}
-  title="In Progress"
-  subtitle=""
-/>
+            <StatCard
+              icon={<FaCheckCircle />}
+              count={stats.completed}
+              title="Completed"
+              subtitle="Successful Analyses"
+            />
 
-</div>
-  </section>
+            <StatCard
+              icon={<FaFileAlt />}
+              count={stats.reports}
+              title="Reports Generated"
+              subtitle="Ready to View"
+            />
 
-  <section className="recent-analysis">
+            <StatCard
+              icon={<FaClock />}
+              count={stats.pending}
+              title="In Progress"
+              subtitle=""
+            />
 
-    <div className="recent-top">
+          </div>
 
-        <h3>Recent Analyses</h3>
+        </section>
 
-      <button
-  className="view-btn"
-  onClick={() => navigate("/ai-analysis")}>
-  View All
-</button>
+        <section className="recent-analysis">
 
-    </div>
+          <div className="recent-top">
 
-{
-  projects.length === 0 ? (
+            <h3>Recent Analyses</h3>
 
-    <p className="no-analysis">
-      No analyses available.
-    </p>
+            <button
+              className="view-btn"
+              onClick={() => navigate("/ai-analysis")}
+            >
+              View All
+            </button>
 
-  ) : (
+          </div>
+                    {projects.length === 0 ? (
 
-    projects.slice(0, 3).map((project) => (
+            <p className="no-analysis">
+              No analyses available.
+            </p>
 
-     <AnalysisCard
-  key={project._id}
-  title={project.projectName}
-  date={new Date(project.createdAt).toLocaleDateString()}
-  status={project.status || "Draft"}
-/>
+          ) : (
 
-    ))
+            projects.slice(0, 3).map((project) => (
 
-  )
-} 
+              <AnalysisCard
+                key={project._id}
+                title={project.projectName}
+                date={new Date(project.createdAt).toLocaleDateString()}
+                status={project.status || "Draft"}
+              />
 
-</section>
-</div>
+            ))
+
+          )}
+
+        </section>
+
+      </div>
 
     </div>
   );

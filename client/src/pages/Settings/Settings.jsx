@@ -1,75 +1,85 @@
 import "./Settings.css";
 import Sidebar from "../../components/Sidebar/Sidebar";
-import { FaLock, FaSignOutAlt, FaEye, FaEyeSlash } from "react-icons/fa";
+import {
+  FaLock,
+  FaSignOutAlt,
+  FaEye,
+  FaEyeSlash,
+  FaArrowLeft,
+} from "react-icons/fa";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { changePassword } from "../../services/authService";
+
 function Settings() {
+
   const navigate = useNavigate();
 
-const [currentPassword, setCurrentPassword] = useState("");
-const [newPassword, setNewPassword] = useState("");
-const [confirmPassword, setConfirmPassword] = useState("");
+  const [currentPassword, setCurrentPassword] = useState("");
+  const [newPassword, setNewPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
 
-const [showCurrent, setShowCurrent] = useState(false);
-const [showNew, setShowNew] = useState(false);
-const [showConfirm, setShowConfirm] = useState(false);
+  const [showCurrent, setShowCurrent] = useState(false);
+  const [showNew, setShowNew] = useState(false);
+  const [showConfirm, setShowConfirm] = useState(false);
 
-const handleUpdatePassword = async () => {
+  const handleUpdatePassword = async () => {
 
-  if (!currentPassword || !newPassword || !confirmPassword) {
-    alert("Please fill all fields.");
-    return;
-  }
+    if (!currentPassword || !newPassword || !confirmPassword) {
+      alert("Please fill all fields.");
+      return;
+    }
 
-  if (newPassword.length < 6) {
-    alert("New password must contain at least 6 characters.");
-    return;
-  }
+    if (newPassword.length < 6) {
+      alert("New password must contain at least 6 characters.");
+      return;
+    }
 
-  if (newPassword !== confirmPassword) {
-    alert("Passwords do not match.");
-    return;
-  }
+    if (newPassword !== confirmPassword) {
+      alert("Passwords do not match.");
+      return;
+    }
 
-  try {
+    try {
 
-    const response = await changePassword({
-      currentPassword,
-      newPassword,
-    });
+      const response = await changePassword({
+        currentPassword,
+        newPassword,
+      });
 
-    alert(response.message);
+      alert(response.message);
 
-    setCurrentPassword("");
-    setNewPassword("");
-    setConfirmPassword("");
+      setCurrentPassword("");
+      setNewPassword("");
+      setConfirmPassword("");
 
-  } catch (error) {
+    } catch (error) {
 
-    alert(
-      error.response?.data?.message ||
-      "Password update failed."
+      alert(
+        error.response?.data?.message ||
+        "Password update failed."
+      );
+
+    }
+
+  };
+
+  const handleLogout = () => {
+
+    const confirmLogout = window.confirm(
+      "Are you sure you want to logout?"
     );
 
-  }
+    if (!confirmLogout) return;
 
-};
+    localStorage.removeItem("token");
+    localStorage.removeItem("user");
 
-const handleLogout = () => {
+    navigate("/");
+  };
 
-  const confirmLogout = window.confirm(
-    "Are you sure you want to logout?"
-  );
-
-  if (!confirmLogout) return;
-
-  localStorage.removeItem("token");
-  localStorage.removeItem("user");
-
-  navigate("/");
-};
   return (
+
     <div className="settings-page">
 
       <Sidebar />
@@ -77,11 +87,22 @@ const handleLogout = () => {
       <div className="settings-content">
 
         <div className="settings-header">
-          <h1>Settings</h1>
-          <p>Manage your account settings</p>
+
+          <div
+            className="settings-back"
+            onClick={() => navigate(-1)}
+          >
+            <FaArrowLeft />
+          </div>
+
+          <div>
+            <h1>Settings</h1>
+            <p>Manage your account settings</p>
+          </div>
+
         </div>
 
-        {/* Change Password */}
+        {/* Password */}
 
         <div className="settings-card">
 
@@ -89,68 +110,76 @@ const handleLogout = () => {
             <FaLock />
             Change Password
           </h2>
-<div className="form-group">
-  <label>Current Password</label>
 
-  <div className="password-field">
+          <div className="form-group">
 
-    <input
-      type={showCurrent ? "text" : "password"}
-      placeholder="Enter current password"
-      value={currentPassword}
-      onChange={(e) => setCurrentPassword(e.target.value)}
-    />
+            <label>Current Password</label>
 
-    <span onClick={() => setShowCurrent(!showCurrent)}>
-      {showCurrent ? <FaEyeSlash /> : <FaEye />}
-    </span>
+            <div className="password-field">
 
-  </div>
-</div>
+              <input
+                type={showCurrent ? "text" : "password"}
+                placeholder="Enter current password"
+                value={currentPassword}
+                onChange={(e) => setCurrentPassword(e.target.value)}
+              />
 
-        <div className="form-group">
-  <label>New Password</label>
+              <span onClick={() => setShowCurrent(!showCurrent)}>
+                {showCurrent ? <FaEyeSlash /> : <FaEye />}
+              </span>
 
-  <div className="password-field">
+            </div>
 
-    <input
-      type={showNew ? "text" : "password"}
-      placeholder="Enter new password"
-      value={newPassword}
-      onChange={(e) => setNewPassword(e.target.value)}
-    />
+          </div>
 
-    <span onClick={() => setShowNew(!showNew)}>
-      {showNew ? <FaEyeSlash /> : <FaEye />}
-    </span>
+          <div className="form-group">
 
-  </div>
-</div>
-         <div className="form-group">
-  <label>Confirm Password</label>
+            <label>New Password</label>
 
-  <div className="password-field">
+            <div className="password-field">
 
-    <input
-      type={showConfirm ? "text" : "password"}
-      placeholder="Confirm new password"
-      value={confirmPassword}
-      onChange={(e) => setConfirmPassword(e.target.value)}
-    />
+              <input
+                type={showNew ? "text" : "password"}
+                placeholder="Enter new password"
+                value={newPassword}
+                onChange={(e) => setNewPassword(e.target.value)}
+              />
 
-    <span onClick={() => setShowConfirm(!showConfirm)}>
-      {showConfirm ? <FaEyeSlash /> : <FaEye />}
-    </span>
+              <span onClick={() => setShowNew(!showNew)}>
+                {showNew ? <FaEyeSlash /> : <FaEye />}
+              </span>
 
-  </div>
-</div>
+            </div>
 
-        <button
-  className="update-btn"
-  onClick={handleUpdatePassword}
->
-  Update Password
-</button>
+          </div>
+
+          <div className="form-group">
+
+            <label>Confirm Password</label>
+
+            <div className="password-field">
+
+              <input
+                type={showConfirm ? "text" : "password"}
+                placeholder="Confirm new password"
+                value={confirmPassword}
+                onChange={(e) => setConfirmPassword(e.target.value)}
+              />
+
+              <span onClick={() => setShowConfirm(!showConfirm)}>
+                {showConfirm ? <FaEyeSlash /> : <FaEye />}
+              </span>
+
+            </div>
+
+          </div>
+
+          <button
+            className="update-btn"
+            onClick={handleUpdatePassword}
+          >
+            Update Password
+          </button>
 
         </div>
 
@@ -167,18 +196,19 @@ const handleLogout = () => {
             Click the button below to securely sign out of your account.
           </p>
 
-         <button
-  className="logout-btn"
-  onClick={handleLogout}
->
-  Logout
-</button>
+          <button
+            className="logout-btn"
+            onClick={handleLogout}
+          >
+            Logout
+          </button>
 
         </div>
 
       </div>
 
     </div>
+
   );
 }
 

@@ -1,6 +1,6 @@
 import "./AIAnalysis.css";
 import Sidebar from "../../components/Sidebar/Sidebar";
-import { FaSearch, FaEye, FaDownload, FaTrash } from "react-icons/fa";
+import { FaSearch, FaEye, FaDownload, FaTrash, FaArrowLeft } from "react-icons/fa";
 import { useState, useEffect } from "react";
 import { getAllAnalyses,  deleteAnalysis,} from "../../services/aiService";
 import { useNavigate } from "react-router-dom";
@@ -120,9 +120,14 @@ const handleDownload = async (id, projectName) => {
       <div className="analysis-content">
 
         <div className="analysis-header">
+          <button
+  className="mobile-back-btn"
+  onClick={() => navigate("/dashboard")}
+>
+  <FaArrowLeft />
+</button>
 
-          <h1>My Analyses</h1>
-
+          <h1>My Analyses </h1>
           <p>
             View and manage all your AI generated requirement analyses.
           </p>

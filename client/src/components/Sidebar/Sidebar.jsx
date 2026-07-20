@@ -1,6 +1,5 @@
 import "./Sidebar.css";
-import { NavLink } from "react-router-dom";
-import { useNavigate } from "react-router-dom";
+import { NavLink, useNavigate } from "react-router-dom";
 import {
   FaBrain,
   FaHome,
@@ -9,90 +8,118 @@ import {
   FaUser,
   FaCog,
   FaSignOutAlt,
+  FaTimes,
 } from "react-icons/fa";
 
-function Sidebar() {
+function Sidebar({ isOpen, closeSidebar }) {
   const navigate = useNavigate();
-const handleLogout = () => {
-  localStorage.removeItem("token");
-  localStorage.removeItem("user");
-  localStorage.removeItem("analysisReport");
 
-  navigate("/");
-};
+  const handleLogout = () => {
+    localStorage.removeItem("token");
+    localStorage.removeItem("user");
+    localStorage.removeItem("analysisReport");
+
+    navigate("/");
+  };
+
   return (
-    <aside className="sidebar">
+    <>
+      {/* Overlay for Mobile */}
+      {isOpen && (
+        <div
+          className="sidebar-overlay"
+          onClick={closeSidebar}
+        ></div>
+      )}
 
-      {/* Logo */}
-      <div className="sidebar-logo">
-        <FaBrain className="logo-icon" />
-        <h2>AI Analyzer</h2>
-      </div>
+      <aside className={`sidebar ${isOpen ? "show" : ""}`}>
 
-      {/* Menu */}
-      <ul className="sidebar-menu">
+        {/* Mobile Close Button */}
 
-  <NavLink
-    to="/dashboard"
-    className={({ isActive }) =>
-      isActive ? "menu-item active" : "menu-item"
-    }
-  >
-    <FaHome />
-    <span>Dashboard</span>
-  </NavLink>
+        <div className="close-btn" onClick={closeSidebar}>
+          <FaTimes />
+        </div>
 
-  <NavLink
-    to="/requirement-form"
-    className={({ isActive }) =>
-      isActive ? "menu-item active" : "menu-item"
-    }
-  >
-    <FaPlus />
-    <span>New Requirement</span>
-  </NavLink>
+        {/* Logo */}
 
-  <NavLink
-    to="/ai-analysis"
-    className={({ isActive }) =>
-      isActive ? "menu-item active" : "menu-item"
-    }
-  >
-    <FaFileAlt />
-    <span>My Analyses</span>
-  </NavLink>
+        <div className="sidebar-logo">
+          <FaBrain className="logo-icon" />
+          <h2>AI Analyzer</h2>
+        </div>
 
- <NavLink
-  to="/profile"
-  className={({ isActive }) =>
-    isActive ? "menu-item active" : "menu-item"
-  }
->
-  <FaUser />
-  <span>Profile</span>
-</NavLink>
+        {/* Menu */}
 
-  <NavLink
-  to="/settings"
-  className={({ isActive }) =>
-    isActive ? "menu-item active" : "menu-item"
-  }
->
-  <FaCog />
-  <span>Settings</span>
-</NavLink>
-</ul>
+        <ul className="sidebar-menu">
 
-      {/* Logout */}
-     <div
-  className="logout"
-  onClick={handleLogout}
->
-  <FaSignOutAlt />
-  <span>Logout</span>
-</div>
+          <NavLink
+            to="/dashboard"
+            className={({ isActive }) =>
+              isActive ? "menu-item active" : "menu-item"
+            }
+            onClick={closeSidebar}
+          >
+            <FaHome />
+            <span>Dashboard</span>
+          </NavLink>
 
-    </aside>
+          <NavLink
+            to="/requirement-form"
+            className={({ isActive }) =>
+              isActive ? "menu-item active" : "menu-item"
+            }
+            onClick={closeSidebar}
+          >
+            <FaPlus />
+            <span>New Requirement</span>
+          </NavLink>
+
+          <NavLink
+            to="/ai-analysis"
+            className={({ isActive }) =>
+              isActive ? "menu-item active" : "menu-item"
+            }
+            onClick={closeSidebar}
+          >
+            <FaFileAlt />
+            <span>My Analyses</span>
+          </NavLink>
+
+          <NavLink
+            to="/profile"
+            className={({ isActive }) =>
+              isActive ? "menu-item active" : "menu-item"
+            }
+            onClick={closeSidebar}
+          >
+            <FaUser />
+            <span>Profile</span>
+          </NavLink>
+
+          <NavLink
+            to="/settings"
+            className={({ isActive }) =>
+              isActive ? "menu-item active" : "menu-item"
+            }
+            onClick={closeSidebar}
+          >
+            <FaCog />
+            <span>Settings</span>
+          </NavLink>
+
+        </ul>
+
+        {/* Logout */}
+
+        <div
+          className="logout"
+          onClick={handleLogout}
+        >
+          <FaSignOutAlt />
+          <span>Logout</span>
+        </div>
+
+      </aside>
+    </>
   );
 }
 

@@ -3,13 +3,18 @@ import { Link, useNavigate } from "react-router-dom";
 import { useState } from "react";
 import reactLogo from "../../assets/AIimage2.jpeg";
 import { loginUser } from "../../services/authService";
+
 function Login() {
-const navigate = useNavigate();
+  const navigate = useNavigate();
 
-const [email, setEmail] = useState("");
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [loading, setLoading] = useState(false);
 
-const handleLogin = async (e) => {
+  const handleLogin = async (e) => {
   e.preventDefault();
+
+  setLoading(true);
 
   try {
     const data = await loginUser({
@@ -21,89 +26,99 @@ const handleLogin = async (e) => {
     localStorage.setItem("user", JSON.stringify(data.user));
 
     alert("Login Successful!");
-
     navigate("/dashboard");
-  } catch (error) {
-  console.log(error);
-  console.log(error.response);
 
-  alert(
-    error.response?.data?.message || "Login Failed. Please try again."
-  );
-}
+  } catch (error) {
+    console.log(error);
+    console.log(error.response);
+
+    alert(
+      error.response?.data?.message || "Login Failed. Please try again."
+    );
+  } finally {
+    setLoading(false);
+  }
 };
-const [password, setPassword] = useState("");
 
   return (
-    <div className="login-container">
+    <div className="container-fluid login-container">
+      <div className="row min-vh-100 align-items-center">
 
-      {/* Left Section */}
-      <div className="login-left">
+        {/* Left Section */}
+        <div className="col-12 col-lg-6 d-flex justify-content-center align-items-center">
+          <div className="login-left text-center">
+            <h1>AI Requirement Analyzer</h1>
 
+            <p>
+              Transform software requirements into intelligent insights using AI.
+            </p>
 
-  <h1>AI Requirement Analyzer</h1>
+            <img
+              src={reactLogo}
+              alt="AI Requirement Analyzer"
+              className="login-image img-fluid"
+            />
+          </div>
+        </div>
 
-  <p>
-    Transform software requirements into intelligent insights using AI.
-  </p> <br></br>
-  <img
-  src={reactLogo}
-  alt="React Logo"
-  className="login-image"
-/>
-</div>
+        {/* Right Section */}
+        <div className="col-12 col-lg-6 d-flex justify-content-center align-items-center">
 
-    {/* Right Section */}
-<div className="login-right">
+          <div className="login-box">
 
-  <div className="login-box">
+            <h2>Welcome Back</h2>
 
-    <h2>Welcome Back</h2>
+            <p>Login to your account.</p>
 
-    <p>
-       Login to your account.
-    </p>
+            <form onSubmit={handleLogin}>
 
- <form onSubmit={handleLogin}>
+              <div className="form-group mb-3">
+                <label>Email Address</label>
 
-  <div className="form-group">
-    <label>Email Address</label>
-   <input
-  type="email"
-  placeholder="Enter your email"
-  value={email}
-  onChange={(e) => setEmail(e.target.value)}
-/>
-  </div>
+                <input
+                  type="email"
+                  className="form-control"
+                  placeholder="Enter your email"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                />
+              </div>
 
-  <div className="form-group">
-    <label>Password</label>
-   <input
-  type="password"
-  placeholder="Enter your password"
-  value={password}
-  onChange={(e) => setPassword(e.target.value)}
-/>
-  </div>
-<div className="form-options">
-  <a href="#">Forgot Password?</a>
-</div>
+              <div className="form-group mb-3">
+                <label>Password</label>
 
-<button type="submit">
-  Sign In
-</button>
+                <input
+                  type="password"
+                  className="form-control"
+                  placeholder="Enter your password"
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                />
+              </div>
 
-<p className="register-text">
-  Don't have an account? <Link to="/register">Register</Link>
-</p>
-</form>
+              <div className="form-options mb-3">
+                <a href="#">Forgot Password?</a>
+              </div>
 
-  </div>
+                        <button
+              type="submit"
+              className="btn btn-dark w-100 py-3"
+              disabled={loading}
+            >
+              {loading ? "Signing in..." : "Sign In"}
+            </button>
+              <p className="register-text">
+                Don't have an account?{" "}
+                <Link to="/register">Register</Link>
+              </p>
 
-</div>
+            </form>
 
-      
+          </div>
 
+        </div>
+
+      </div>
     </div>
   );
 }

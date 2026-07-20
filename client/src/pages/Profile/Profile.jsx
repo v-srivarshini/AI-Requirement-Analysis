@@ -1,8 +1,12 @@
 import "./Profile.css";
 import Sidebar from "../../components/Sidebar/Sidebar";
 import { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
+import { FaArrowLeft } from "react-icons/fa";
 
 function Profile() {
+
+  const navigate = useNavigate();
 
   const [user, setUser] = useState({});
 
@@ -19,8 +23,19 @@ function Profile() {
       <div className="profile-content">
 
         <div className="profile-header">
-          <h1>My Profile</h1>
-          <p>Manage your personal information</p>
+
+          <div
+            className="profile-back"
+            onClick={() => navigate(-1)}
+          >
+            <FaArrowLeft />
+          </div>
+
+          <div>
+            <h1>My Profile</h1>
+            <p>Manage your personal information</p>
+          </div>
+
         </div>
 
         <div className="profile-card">
@@ -41,29 +56,35 @@ function Profile() {
 
             <div className="form-group">
               <label>Full Name</label>
+
               <input
                 type="text"
                 value={user?.name || ""}
                 readOnly
               />
+
             </div>
 
             <div className="form-group">
               <label>Email Address</label>
+
               <input
                 type="email"
                 value={user?.email || ""}
                 readOnly
               />
+
             </div>
 
             <div className="form-group">
               <label>Phone Number</label>
+
               <input
                 type="text"
                 value={user?.phone || "Not Provided"}
                 readOnly
               />
+
             </div>
 
             <div className="profile-actions">
@@ -71,9 +92,10 @@ function Profile() {
               <button
                 type="button"
                 className="edit-btn"
-               onClick={() =>
-  alert("Profile update feature will be available in a future update.")
-
+                onClick={() =>
+                  alert(
+                    "Profile update feature will be available in a future update."
+                  )
                 }
               >
                 Edit Profile
